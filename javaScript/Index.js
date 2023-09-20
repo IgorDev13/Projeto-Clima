@@ -4,12 +4,6 @@ const weatherBox = document.querySelector(".weather-box");
 const weatherDetails = document.querySelector(".weather-details");
 const error404 = document.querySelector(".not-found");
 
-/*function fToC(fahrenheit) {
-  var fTemp = fahrenheit;
-  var fToCel = ((fTemp - 32) * 5) / 9;
-  return fToCel;
-}*/
-
 search.addEventListener("click", async () => {
   const APIKey = "862afcaaefe7401a00e7c7a1d69c5a09";
   const city = document.querySelector(".search-box input").value;
@@ -25,7 +19,7 @@ search.addEventListener("click", async () => {
 
   console.log(requestCountryInfo);
   if (requestCountryInfo != null) {
-    const urlWeather = `https://api.openweathermap.org/data/2.5/weather?lat=${requestCountryInfo.lat}&lon=${requestCountryInfo.lon}&&appid=${APIKey}`;
+    const urlWeather = `https://api.openweathermap.org/data/2.5/weather?lat=${requestCountryInfo.lat}&lon=${requestCountryInfo.lon}&units=metric&appid=${APIKey}`;
 
     const requestCountryWeather = await fetch(urlWeather)
       .then((response) => response.json())
@@ -66,8 +60,6 @@ search.addEventListener("click", async () => {
       default:
         image.src = "";
     }
-
-    // const tempConvert = fToC(parseInt(requestCountryWeather.main.temp));
 
     temperature.innerHTML = `${parseInt(
       requestCountryWeather.main.temp
