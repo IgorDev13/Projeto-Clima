@@ -25,7 +25,7 @@ search.addEventListener("click", async () => {
 
   console.log(requestCountryInfo);
   if (requestCountryInfo != null) {
-    const urlWeather = `https://api.openweathermap.org/data/2.5/weather?lat=${requestCountryInfo.lat}&lon=${requestCountryInfo.lon}&units=metric&appid=${APIKey}`;
+    const urlWeather = `https://api.openweathermap.org/data/2.5/weather?lat=${requestCountryInfo.lat}&lon=${requestCountryInfo.lon}&&appid=${APIKey}`;
 
     const requestCountryWeather = await fetch(urlWeather)
       .then((response) => response.json())
