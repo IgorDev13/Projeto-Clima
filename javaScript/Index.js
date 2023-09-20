@@ -4,71 +4,88 @@ const weatherBox = document.querySelector(".weather-box");
 const weatherDetails = document.querySelector(".weather-details");
 const error404 = document.querySelector(".not-found");
 
-search.addEventListener("click", () => {
+/*function fToC(fahrenheit) {
+  var fTemp = fahrenheit;
+  var fToCel = ((fTemp - 32) * 5) / 9;
+  return fToCel;
+}*/
+
+search.addEventListener("click", async () => {
   const APIKey = "862afcaaefe7401a00e7c7a1d69c5a09";
   const city = document.querySelector(".search-box input").value;
 
   if (city === "") return;
 
-  fetch(
-    `https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}`
-  )
+  const urlCountry = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${APIKey}`;
+
+  console.log(urlCountry);
+  const requestCountryInfo = await fetch(urlCountry)
     .then((response) => response.json())
-    .then((json) => {
-      if (json.cod === "404") {
-        container.style.height = "400px";
-        weatherBox.style.display = "none";
-        weatherDetails.style.display = "none";
-        error404.style.display = "block";
-        error404.classList.add("fadeIn");
-        return;
-      }
+    .then((data) => data[0]);
 
-      error404.style.display = "none";
-      error404.classList.remove("fadeIn");
+  console.log(requestCountryInfo);
+  if (requestCountryInfo != null) {
+    const urlWeather = `https://api.openweathermap.org/data/2.5/weather?lat=${requestCountryInfo.lat}&lon=${requestCountryInfo.lon}&units=metric&appid=${APIKey}`;
 
-      const image = document.querySelector(".weather-box img");
-      const temperature = document.querySelector(".weather-box .temperatura");
-      const description = document.querySelector(".weather-box .descricao");
-      const humidity = document.querySelector(
-        ".weather-details .humidade span"
-      );
-      const wind = document.querySelector(".weather-box .ventania span");
+    const requestCountryWeather = await fetch(urlWeather)
+      .then((response) => response.json())
+      .then((data) => data);
 
-      switch (json.weather[0].main) {
-        case "Clear":
-          image.src = "./img/clear.png";
-          breaks;
+    console.log(requestCountryWeather);
 
-        case "Rain":
-          image.src = "./img/rain.png";
-          breaks;
+    error404.style.display = "none";
+    error404.classList.remove("fadeIn");
 
-        case "Snow":
-          image.src = "./img/snow.png";
-          breaks;
+    const image = document.querySelector(".weather-box img");
+    const temperature = document.querySelector(".weather-box .temperatura");
+    const description = document.querySelector(".weather-box .descricao");
+    const humidity = document.querySelector(".weather-details .humidade span");
+    const wind = document.querySelector(".weather-details .vento span");
 
-        case "Clouds":
-          image.src = "./img/cloud.png";
-          breaks;
+    switch (requestCountryWeather.weather[0].main) {
+      case "Clear":
+        image.src = "img/clear.png";
+        break;
 
-        case "Haze":
-          image.src = "./img/mist.png";
-          breaks;
+      case "Rain":
+        image.src = "img/rain.png";
+        break;
 
-        default:
-          image.src = "";
-      }
+      case "Snow":
+        image.src = "img/snow.png";
+        break;
 
-      temperature.innerHTML = `${parseInt(json.main.temp)}<span>°C</span>`;
-      description.innerHTML = `${json.weather[0].description}`;
-      humidity.innerHTML = `${json.main.humidity}%`;
-      wind.innerHTML = `${parseInt(json.wind.speed)}Km/h`;
+      case "Clouds":
+        image.src = "img/cloud.png";
+        break;
 
-      weatherBox.style.display = "";
-      weatherDetails.style.display = "";
-      weatherBox.classList.add("fadeIn");
-      weatherDetails.classList.add("fadeIn");
-      container.style.height = "590px";
-    });
+      case "Haze":
+        image.src = "img/mist.png";
+        break;
+
+      default:
+        image.src = "";
+    }
+
+    // const tempConvert = fToC(parseInt(requestCountryWeather.main.temp));
+
+    temperature.innerHTML = `${parseInt(
+      requestCountryWeather.main.temp
+    )}<span>°C</span>`;
+    description.innerHTML = `${requestCountryWeather.weather[0].description}`;
+    humidity.innerHTML = `${requestCountryWeather.main.humidity}%`;
+    wind.innerHTML = `${parseInt(requestCountryWeather.wind.speed)}Km/h`;
+
+    weatherBox.style.display = "";
+    weatherDetails.style.display = "";
+    weatherBox.classList.add("fadeIn");
+    weatherDetails.classList.add("fadeIn");
+    container.style.height = "590px";
+  } else {
+    container.style.height = "400px";
+    weatherBox.style.display = "none";
+    weatherDetails.style.display = "none";
+    error404.style.display = "block";
+    error404.classList.add("fadeIn");
+  }
 });
